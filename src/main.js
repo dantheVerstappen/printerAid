@@ -25,21 +25,6 @@ const db = getFirestore(app);
 console.log(db)
 var startTimes, durations, endTimes;
 
-
-window.onbeforeunload = async function() {
-  try {
-    // Voeg gegevens toe aan Firestore
-    await setDoc(doc(db, "printer", "printer1"), {
-      start: startTimes,
-      duration: durations,
-      end: endTimes
-    });
-    alert("Gegevens succesvol verzonden!");
-  }
-  catch (error){
-    console.error("fout, niet verzonden", error)
-  }
-}
 window.onload = async function() {
   try {
     // Haal het document op uit de "printer" collectie, specifiek "printer1"
@@ -52,8 +37,10 @@ window.onload = async function() {
       startTimes = docSnap.data().start;
       durations = docSnap.data().duration;
       endTimes = docSnap.data().end;
-
-      console.log("Gegevens opgehaald:", {startTimes, durations, endTimes});
+      for (let i = 0; i < startTimes.length; i++) {
+        tableAdd (startTimes[i],durations[i],endTimes[i])
+      }
+      console.log("Gegevens opgehaald en aan table toegevoeg:", {startTimes, durations, endTimes});
     } else {
       console.log("Geen document gevonden!");
     }
@@ -84,6 +71,11 @@ ws.onopen = function() {
      // Only calculate time if the state changed from 1 to 0
      if (lastState === 1 && currentState === 0) {
          const timeElapsed = Math.floor((currentTimestamp - lastTimestamp)); // Time in seconds
+            updateArray (startTimes, startformattedDate)
+            updateArray (durations, timeElapsed)
+            updateArray (endTimes, endformattedDate)
+            console.log("Gegevens upgedate:", {startTimes, durations, endTimes});
+            uploadToDatabase ()
             tableAdd (startformattedDate,timeElapsed,endformattedDate)
      }
 
@@ -136,4 +128,18 @@ ws.onopen = function() {
  function updateArray (array, newData) {
     array.splice(0, 1); // Removes the first element
     array.push(newData); // Adds a new element at the end
+ }
+ async function uploadToDatabase () {
+  try {
+    // Voeg gegevens toe aan Firestore
+    await setDoc(doc(db, "printer", "printer1"), {
+      start: startTimes,
+      duration: durations,
+      end: endTimes
+    });
+    alert("Gegevens succesvol verzonden!");
+  }
+  catch (error){
+    console.error("fout, niet verzonden", error)
+  }
  }
