@@ -23,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
  
 console.log(db)
-var startTimes, durations;
+var startTimes, durations, endTimes;
 
 
 window.onbeforeunload = async function() {
@@ -32,6 +32,7 @@ window.onbeforeunload = async function() {
     await setDoc(doc(db, "printer", "printer1"), {
       start: startTimes,
       duration: durations,
+      end: endTimes
     });
     alert("Gegevens succesvol verzonden!");
   }
@@ -50,8 +51,9 @@ window.onload = async function() {
       // Haal de gegevens op en wijs ze toe aan de variabelen
       startTimes = docSnap.data().start;
       durations = docSnap.data().duration;
+      endTimes = docSnap.data().end;
 
-      console.log("Gegevens opgehaald:", {startTimes, durations});
+      console.log("Gegevens opgehaald:", {startTimes, durations, endTimes});
     } else {
       console.log("Geen document gevonden!");
     }
@@ -72,10 +74,10 @@ ws.onopen = function() {
  ws.onmessage = function(event) {
      const currentState = parseInt(event.data); // Convert to integer
      const currentTimestamp = Date.now();
-     const currentStartDate = new Date(currentTimestamp);
+     const currentEndDate = new Date(currentTimestamp);
+     const endformattedDate = currentEndDate.toLocaleString();
+     const currentStartDate = new Date(lastTimestamp)
      const startformattedDate = currentStartDate.toLocaleString();
-     const currentEndDate = new Date(lastTimestamp)
-     const endformattedDate = (currentEndDate).toLocaleString();
      // Display the current sensor state
      document.getElementById('sensorValue').innerText = `Sensor Value: ${currentState}`;
 
@@ -120,6 +122,7 @@ ws.onopen = function() {
       
         return result.join(', ');
  }
+ function addArraysToTable () {}
  function tableAdd (start,info,end) {
     const table = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
     const newRow = table.insertRow();
