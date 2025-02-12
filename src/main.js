@@ -114,7 +114,6 @@ ws.onopen = function() {
       
         return result.join(', ');
  }
- function addArraysToTable () {}
  function tableAdd (start,info,end) {
     const table = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
     const newRow = table.insertRow();
@@ -137,7 +136,6 @@ ws.onopen = function() {
       duration: durations,
       end: endTimes
     });
-    alert("Gegevens succesvol verzonden!");
   }
   catch (error){
     console.error("fout, niet verzonden", error)
