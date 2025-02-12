@@ -68,7 +68,7 @@ let lastTimestamp = Date.now();
 let lastState = null;
 
 ws.onopen = function() {
-     console.log('Yay! Connected to WebSocket server');
+     console.log('Connected to WebSocket server');
  };
 
  ws.onmessage = function(event) {
