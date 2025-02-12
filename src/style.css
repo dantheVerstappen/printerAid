@@ -1,0 +1,32 @@
+/* src/style.css */
+body 
+{
+    background-color: rgb(255, 255, 255);
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-align: center;
+}
+#sensorValue
+{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin: 20px;
+    font-size: 24px;
+}
+h1
+{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+    color: rgb(51, 0, 255);
+    -webkit-text-stroke: 2px rgb(0, 0, 0);
+    font-size: 32px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse; 
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #f2f2f2;
+}
