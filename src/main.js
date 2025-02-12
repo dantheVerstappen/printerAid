@@ -23,24 +23,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
  
 console.log(db)
-var startTimes, durations;
-// Eventlistener voor de registratieknop
-document.getElementById("submitButton").addEventListener("click", async function () {
+var startTimes, durations, endTimes;
 
-});
-window.onbeforeunload = async function() {
-  try {
-    // Voeg gegevens toe aan Firestore
-    await setDoc(doc(db, "printer", "printer1"), {
-      start: startTimes,
-      duration: durations,
-    });
-    alert("Gegevens succesvol verzonden!");
-  }
-  catch (error){
-    console.error("fout, niet verzonden", error)
-  }
-}
 window.onload = async function() {
   try {
     // Haal het document op uit de "printer" collectie, specifiek "printer1"
@@ -52,8 +36,11 @@ window.onload = async function() {
       // Haal de gegevens op en wijs ze toe aan de variabelen
       startTimes = docSnap.data().start;
       durations = docSnap.data().duration;
-
-      console.log("Gegevens opgehaald:", {startTimes, durations});
+      endTimes = docSnap.data().end;
+      for (let i = 0; i < startTimes.length; i++) {
+        tableAdd (startTimes[i],durations[i],endTimes[i])
+      }
+      console.log("Gegevens opgehaald en aan table toegevoeg:", {startTimes, durations, endTimes});
     } else {
       console.log("Geen document gevonden!");
     }
@@ -62,7 +49,7 @@ window.onload = async function() {
   }
 }
  // Replace 'ESP32_IP' with the actual IP address of your ESP32
- const ws = new WebSocket('ws://10.16.1.49:81');
+ const ws = new WebSocket('ws://10.16.1.35:81');
 
 let lastTimestamp = Date.now();
 let lastState = null;
@@ -74,16 +61,21 @@ ws.onopen = function() {
  ws.onmessage = function(event) {
      const currentState = parseInt(event.data); // Convert to integer
      const currentTimestamp = Date.now();
-     const currentStartDate = new Date(currentTimestamp);
+     const currentEndDate = new Date(currentTimestamp);
+     const endformattedDate = currentEndDate.toLocaleString();
+     const currentStartDate = new Date(lastTimestamp)
      const startformattedDate = currentStartDate.toLocaleString();
-     const currentEndDate = new Date(lastTimestamp)
-     const endformattedDate = (currentEndDate).toLocaleString();
      // Display the current sensor state
      document.getElementById('sensorValue').innerText = `Sensor Value: ${currentState}`;
 
      // Only calculate time if the state changed from 1 to 0
      if (lastState === 1 && currentState === 0) {
          const timeElapsed = Math.floor((currentTimestamp - lastTimestamp)); // Time in seconds
+            updateArray (startTimes, startformattedDate)
+            updateArray (durations, timeElapsed)
+            updateArray (endTimes, endformattedDate)
+            console.log("Gegevens upgedate:", {startTimes, durations, endTimes});
+            uploadToDatabase ()
             tableAdd (startformattedDate,timeElapsed,endformattedDate)
      }
 
@@ -122,6 +114,7 @@ ws.onopen = function() {
       
         return result.join(', ');
  }
+ function addArraysToTable () {}
  function tableAdd (start,info,end) {
     const table = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
     const newRow = table.insertRow();
@@ -135,4 +128,18 @@ ws.onopen = function() {
  function updateArray (array, newData) {
     array.splice(0, 1); // Removes the first element
     array.push(newData); // Adds a new element at the end
+ }
+ async function uploadToDatabase () {
+  try {
+    // Voeg gegevens toe aan Firestore
+    await setDoc(doc(db, "printer", "printer1"), {
+      start: startTimes,
+      duration: durations,
+      end: endTimes
+    });
+    alert("Gegevens succesvol verzonden!");
+  }
+  catch (error){
+    console.error("fout, niet verzonden", error)
+  }
  }
