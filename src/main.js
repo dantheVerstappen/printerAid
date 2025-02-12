@@ -24,10 +24,8 @@ const db = getFirestore(app);
  
 console.log(db)
 var startTimes, durations;
-// Eventlistener voor de registratieknop
-document.getElementById("submitButton").addEventListener("click", async function () {
 
-});
+
 window.onbeforeunload = async function() {
   try {
     // Voeg gegevens toe aan Firestore
@@ -62,7 +60,7 @@ window.onload = async function() {
   }
 }
  // Replace 'ESP32_IP' with the actual IP address of your ESP32
- const ws = new WebSocket('ws://10.16.1.49:81');
+ const ws = new WebSocket('ws://10.16.1.35:81');
 
 let lastTimestamp = Date.now();
 let lastState = null;
