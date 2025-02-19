@@ -49,7 +49,7 @@ window.onload = async function() {
   }
 }
  // Replace 'ESP32_IP' with the actual IP address of your ESP32
- const ws = new WebSocket('ws://10.16.1.35:81');
+ const ws = new WebSocket('ws://10.16.1.52:81');
 
 let lastTimestamp = Date.now();
 let lastState = false;
@@ -69,7 +69,7 @@ ws.onopen = function() {
      document.getElementById('sensorValue').innerText = `Sensor Value: ${currentState}`;
 
      // Only calculate time if the state changed from 1 to 0
-     if (lastState === 1 && currentState === 0) {
+     if (lastState === true && currentState === false) {
          const timeElapsed = Math.floor((currentTimestamp - lastTimestamp)); // Time in seconds
             updateArray (startTimes, startformattedDate)
             updateArray (durations, timeElapsed)
