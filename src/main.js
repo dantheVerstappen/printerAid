@@ -2,11 +2,11 @@
 // src/main.js
 import './style.css';
 
-// Importeer Firebase en PubNub
+// Importing Firebase and PubNub
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
 import { getFirestore, collection, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
  
-// Firebase Configuratie
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDq1MeOTqw83EhUlywQaG1zxQxDtu3E9Ss",
   authDomain: "printeraid-f8d6f.firebaseapp.com",
@@ -18,7 +18,7 @@ const firebaseConfig = {
   measurementId: "G-EDFM0BJC3W"
 };
  
-// Initialiseer Firebase
+// Initialising Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
  
@@ -27,13 +27,13 @@ var startTimes, durations, endTimes;
 
 window.onload = async function() {
   try {
-    // Haal het document op uit de "printer" collectie, specifiek "printer1"
+    // get the document uit of "printer" collection, specific "printer1"
     const docRef = doc(db, "printer", "printer1");
     const docSnap = await getDoc(docRef);
 
-    // Check of het document bestaat
+    // Check if the document exists
     if (docSnap.exists()) {
-      // Haal de gegevens op en wijs ze toe aan de variabelen
+      // get the data and assign them tp the variables
       startTimes = docSnap.data().start;
       durations = docSnap.data().duration;
       endTimes = docSnap.data().end;
@@ -49,17 +49,17 @@ window.onload = async function() {
   }
 }
  // Replace 'ESP32_IP' with the actual IP address of your ESP32
- const ws = new WebSocket('ws://10.16.1.35:81');
+ const ws = new WebSocket('ws://10.16.1.52:81');
 
 let lastTimestamp = Date.now();
-let lastState = null;
+let lastState = false;
 
 ws.onopen = function() {
      console.log('Connected to WebSocket server');
  };
 
  ws.onmessage = function(event) {
-     const currentState = parseInt(event.data); // Convert to integer
+     const currentState = !!parseInt(event.data); // Convert to boolean
      const currentTimestamp = Date.now();
      const currentEndDate = new Date(currentTimestamp);
      const endformattedDate = currentEndDate.toLocaleString();
@@ -69,7 +69,7 @@ ws.onopen = function() {
      document.getElementById('sensorValue').innerText = `Sensor Value: ${currentState}`;
 
      // Only calculate time if the state changed from 1 to 0
-     if (lastState === 1 && currentState === 0) {
+     if (lastState === true && currentState === false) {
          const timeElapsed = Math.floor((currentTimestamp - lastTimestamp)); // Time in seconds
             updateArray (startTimes, startformattedDate)
             updateArray (durations, timeElapsed)
